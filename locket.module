@@ -1,8 +1,17 @@
-#!name=Locket VIP Vann Thuong
-#!desc=Mo khoa tinh nang Locket VIP
+#!name=Locket VIP Vann Thuong Edition
+#!desc=Tùy chỉnh Locket VIP, Video 60s & Caption cá nhân dành riêng cho Vann Thuong.
 
-[MitM]
-hostname = api.locket.camera
+[General]
+
+[MITM]
+hostname = %APPEND% api.revenuecat.com, firebaseremoteconfig.googleapis.com, api.locket.camera
 
 [Script]
-http-response ^https?:\/\/api\.locket\.camera\/v1\/remote-config script-path=https://raw.githubusercontent.com/dangdinhthang17052006-beep/locketgold.3/main/locket.js, requires-body=true, tag=Locket_VIP
+# 1. Tùy chỉnh Feature & Caption cá nhân (Dùng code locket.js trên GitHub của bạn)
+locket_remote = type=http-response, pattern=^https?:\/\/firebaseremoteconfig\.googleapis\.com\/v1\/projects\/locket-.*, script-path=https://raw.githubusercontent.com/dangdinhthang17052006-beep/locketgold.3/main/locket.js, requires-body=true, max-size=524288, timeout=60
+
+# 2. Xóa ETag Header chống dính Cache (by nguyencongan)
+deleteHeader = type=http-request, pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers), script-path=https://raw.githubusercontent.com/angl1206205-cmyk/twoBy_Thanh_Anh/db7ae4b1fb71ab0301b07f068f6824c3de55c958/TWO, timeout=60
+
+# 3. Kích hoạt Gold RevenueCat (by nguyencongan)
+revenuecat = type=http-response, pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^/]+$), script-path=https://raw.githubusercontent.com/angl1206205-cmyk/3By_ThanhAnh/5df30eb61be016127873d8e2f2ea6c78953ead57/3, requires-body=true, max-size=-1, timeout=60
